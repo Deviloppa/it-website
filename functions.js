@@ -1,3 +1,6 @@
+var MAP_ZOOM = 15;
+
+
 if (Meteor.isClient) {
   Meteor.startup(function() {
     GoogleMaps.load();
@@ -5,12 +8,15 @@ if (Meteor.isClient) {
 
   Template.body.helpers({
     exampleMapOptions: function() {
+      // Geolocation
+      var latLng = Geolocation.latLng();
+
       // Make sure the maps API has loaded
-      if (GoogleMaps.loaded()) {
+      if (GoogleMaps.loaded() && latLng) {
         // Map initialization options
         return {
-          center: new google.maps.LatLng(-37.8136, 144.9631),
-          zoom: 8
+          center: new google.maps.LatLng(latLng.lat, latLng.lng),
+          zoom: MAP_ZOOM
         };
       }
     }
