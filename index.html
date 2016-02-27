@@ -1,89 +1,127 @@
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>IT Website</title>
-    <link href="css/style.css" rel="stylesheet">
-</head>
+<template name="home">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>IT Website</title>
+        <link href="css/style.css" rel="stylesheet">
+    </head>
 
-<body>
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <h3>
-                Internet Technologien Website
-            </h3>
-            <br>
-            <span class="label label-default LabelSearch">Suche:</span>
-            <button type="button" class="btn btn-primary BTsearch" >
-                Suchen
-            </button>
-            <button type="button" class="btn btn-primary BTinsertTag" >
-                Tag eintragen
-            </button>
-            <div class="row">
-                <div class="col-md-8">
-                    <br><br>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>
-                                ID
-                            </th>
-                            <th>
-                                Beschreibun
-                            </th>
-                            <th>
-                                Datum
-                            </th>
-                            <th>
-                                GPS Daten
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                1
-                            </td>
-                            <td>
-                                TB - Monthly
-                            </td>
-                            <td>
-                                01/04/2012
-                            </td>
-                            <td>
-                                Default
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-4">
-                    <h4>
-                        Heading
-                    </h4>
-                    <table class="table2">
-                        <tr> <th>Datum:</th></tr>
-                        <tr> <th>GPS Daten:</th></tr>
-                    </table>
-                   <!-- <div style="text-align: center;"><img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/"></div> -->
-                    <br>
-                    <div class="row">
-                        <div class="col-md-12" style="border-top: 1px solid black;">
-                            <h4>
-                                Vorschau mithilfe der Openstreetmaps API
-                            </h4>
-                            <div class="map-container">
-                                {{> googleMap name="exampleMap" options=exampleMapOptions}}
+    <body>
+    Sign in to create new tags!
+    {{> loginButtons}}
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Internet Technologien Website</h3>
+                <br>
+                <span class="label label-default LabelSearch">Suche:</span>
+                <button type="button" class="btn btn-primary BTsearch">Suchen</button>
+
+                {{#if currentUser}} <!-- nur wenn eingeloggt -->
+                <button type="button" class="btn btn-primary BTinsertTag">
+                    <a href="{{pathFor route='newTag'}}">Tag eintragen</a>
+                    <!-- TODO: onClickListener -->
+                </button>
+                {{/if}}
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <br><br>
+                        <!-- TODO: reactive table verwenden -->
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titel</th>
+                                <th>User</th> <!--Beschreibung vorläufig raus-->
+                                <th>Datum</th>
+                                <th>GPS Daten</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{#each tags}}
+                                <tr>
+                                    <td class="previewMap">{{_id}}</td>
+                                    <td>{{> tag}}</td>
+                                    <td><strong>{{username}}</strong></td>
+                                    <td>{{createdAt}}</td>
+                                    <td>{{position1}} , {{position2}}</td>
+                                </tr>
+                            {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <h4>Heading</h4>
+                        <table class="table2">
+                            <tr>
+                                <th>Datum:</th>
+                            </tr>
+                            <tr>
+                                <th>GPS Daten:</th>
+                            </tr>
+                        </table>
+                        <!-- <div style="text-align: center;"><img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/"></div> -->
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12" style="border-top: 1px solid black;">
+                                <h4>Google Maps Kartenvorschau</h4>
+                                <div class="map-container">
+                                    {{> googleMap name="exampleMap" options=exampleMapOptions}}
+                                </div>
+                                <br>
+                                <!-- <div style="text-align: center;"><img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/"></div> -->
                             </div>
-                            <br>
-                            <!-- <div style="text-align: center;"><img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/"></div> -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-</body>
+    </body>
+</template>
+
+<template name="register">
+    <h2>Register</h2>
+</template>
+
+<template name="login">
+    <h2>Login</h2>
+</template>
+
+<template name="newTag">
+    <h2>Create new Tag</h2>
+    <br/>
+    <form class="new-tags">
+        <input type="text" name="text" placeholder="Hit enter to create"/>
+    </form>
+    <br/>
+    <br/>
+</template>
+
+<template name="main">
+    {{> yield}}
+    {{> navigation}}
+    <hr/>
+    <p>Copyright &copy; IT16, 2016.</p>
+</template>
+
+<template name="navigation">
+    <ul>
+        <li><a href="{{pathFor route='home'}}">Home</a></li>
+        <li><a href="{{pathFor route='register'}}">Register</a></li>
+        <li><a href="{{pathFor route='login'}}">Login</a></li>
+        {{#if currentUser}} <!-- nur wenn eingeloggt -->
+        <li><a href="{{pathFor route='newTag'}}">Create new Tag</a></li>
+        {{/if}}
+    </ul>
+</template>
+
+<template name="tag">
+    {{#if isOwner}}
+    <button class="delete">&times;</button>
+    {{/if}}
+    <span class="text">{{text}}</span>
+</template>
