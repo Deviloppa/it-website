@@ -107,6 +107,7 @@ Template.addTag_Modal.events({
             position1: latLng.lat + TEST_COUNTER,
             position2: latLng.lng + TEST_COUNTER
         });
+        console.log(new Date());
 
         TEST_COUNTER++; // Counter erh�hen, um verschidene GPS Werte zu bekommen
 
