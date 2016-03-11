@@ -81,15 +81,14 @@
 
 <template name="main">
     {{> yield}}
-    <!-- <hr/>
+    <hr/>
      <p>Copyright &copy; IT16, 2016.</p>
-     -->
 </template>
 
 <template name="tag">
     <span class="text">{{text}}</span>
     {{#if isOwner}}
-        <button class="delete">&times;</button>
+        <button class="glyphicon glyphicon-remove delete" aria-hidden="true"></button>
     {{/if}}
 </template>
 
