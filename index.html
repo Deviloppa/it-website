@@ -8,120 +8,301 @@
     </head>
 
     <body>
-    Sign in to create new tags!
-    {{> loginButtons}}
-
     <div class="container-fluid">
+        {{> navbar }}
         <div class="row">
             <div class="col-md-12">
-                <h3>Internet Technologien Website</h3>
-                <br>
-                <span class="label label-default LabelSearch">Suche:</span>
-                <button type="button" class="btn btn-primary BTsearch">Suchen</button>
-
-                {{#if currentUser}} <!-- nur wenn eingeloggt -->
-                <button type="button" class="btn btn-primary BTinsertTag">
-                    <a href="{{pathFor route='newTag'}}">Tag eintragen</a>
-                    <!-- TODO: onClickListener -->
-                </button>
-                {{/if}}
-
+                <h1>Tags
+                    <small>Internet Technologien Website</small>
+                </h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <br><br>
+                <!-- TODO: reactive table verwenden -->
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Titel</th>
+                        <th>User</th> <!--Beschreibung vorl�ufig raus-->
+                        <th>Datum</th>
+                        <th>GPS Daten</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each tags}}
+                        <tr class="previewMap" data-id="{{_id}}">
+                            <td>{{_id}}</td>
+                            <td>{{> tag}}</td>
+                            <td><strong>{{username}}</strong></td>
+                            <td>{{formatDate createdAt}}</td>
+                            <td>{{position1}} , {{position2}}</td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <h4>Heading</h4>
+                {{#with Session 'currentTag'}}
+                    <table class="table2">
+                        <tr>
+                            <td>Datum:</td>
+                            <td>{{formatDate createdAt}}</td>
+                        </tr>
+                        <tr>
+                            <td>GPS Daten:</td>
+                            <td>{{position1}}, {{position2}}</td>
+                        </tr>
+                    </table>
+                {{/with}}
                 <div class="row">
-                    <div class="col-md-8">
-                        <br><br>
-                        <!-- TODO: reactive table verwenden -->
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Titel</th>
-                                <th>User</th> <!--Beschreibung vorläufig raus-->
-                                <th>Datum</th>
-                                <th>GPS Daten</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {{#each tags}}
-                                <tr>
-                                    <td class="previewMap">{{_id}}</td>
-                                    <td>{{> tag}}</td>
-                                    <td><strong>{{username}}</strong></td>
-                                    <td>{{createdAt}}</td>
-                                    <td>{{position1}} , {{position2}}</td>
-                                </tr>
-                            {{/each}}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-4">
-                        <h4>Heading</h4>
-                        <table class="table2">
-                            <tr>
-                                <th>Datum:</th>
-                            </tr>
-                            <tr>
-                                <th>GPS Daten:</th>
-                            </tr>
-                        </table>
-                        <!-- <div style="text-align: center;"><img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/"></div> -->
-                        <br>
-                        <div class="row">
-                            <div class="col-md-12" style="border-top: 1px solid black;">
-                                <h4>Google Maps Kartenvorschau</h4>
-                                <div class="map-container">
-                                    {{> googleMap name="exampleMap" options=exampleMapOptions}}
-                                </div>
-                                <br>
-                                <!-- <div style="text-align: center;"><img alt="Bootstrap Image Preview" src="http://lorempixel.com/140/140/"></div> -->
-                            </div>
-                        </div>
+                    <div class="col-md-12" style="border-top: 1px solid black;">
+                        {{> map}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {{> addTag_Modal}}
+    {{> login_Modal}}
+    {{> register_Modal}}
     </body>
 </template>
 
-<template name="register">
-    <h2>Register</h2>
-</template>
-
-<template name="login">
-    <h2>Login</h2>
-</template>
-
-<template name="newTag">
-    <h2>Create new Tag</h2>
-    <br/>
-    <form class="new-tags">
-        <input type="text" name="text" placeholder="Hit enter to create"/>
-    </form>
-    <br/>
-    <br/>
+<template name="map">
+    <h4>Google Maps Kartenvorschau</h4>
+    <div class="map-container">
+        {{> googleMap name="exampleMap" options=geoLocationMapOptions}}
+    </div>
 </template>
 
 <template name="main">
     {{> yield}}
-    {{> navigation}}
-    <hr/>
-    <p>Copyright &copy; IT16, 2016.</p>
-</template>
-
-<template name="navigation">
-    <ul>
-        <li><a href="{{pathFor route='home'}}">Home</a></li>
-        <li><a href="{{pathFor route='register'}}">Register</a></li>
-        <li><a href="{{pathFor route='login'}}">Login</a></li>
-        {{#if currentUser}} <!-- nur wenn eingeloggt -->
-        <li><a href="{{pathFor route='newTag'}}">Create new Tag</a></li>
-        {{/if}}
-    </ul>
+    <!-- <hr/>
+     <p>Copyright &copy; IT16, 2016.</p>
+     -->
 </template>
 
 <template name="tag">
-    {{#if isOwner}}
-    <button class="delete">&times;</button>
-    {{/if}}
     <span class="text">{{text}}</span>
+    {{#if isOwner}}
+        <button class="delete">&times;</button>
+    {{/if}}
+</template>
+
+<template name="navbar">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Home</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                {{#if currentUser}}
+                    <button id="logout" type="button" class="btn btn-danger navbar-btn navbar-right">Abmelden
+                    </button>
+                    <button type="button" class="btn btn-primary navbar-btn navbar-left" data-toggle="modal"
+                            data-target="#addTag_Modal">
+                        Tag eintragen
+                    </button>
+                    <form class="navbar-form navbar-left" role="search">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search">
+                        </div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
+                {{else}}
+                    <button type="button" class="btn btn-primary navbar-btn navbar-right" data-toggle="modal"
+                            data-target="#login_Modal">Anmelden
+                    </button>
+                {{/if}}
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</template>
+
+<template name="login_Modal">
+    <form id="login_Modal_form">
+        <div class="modal fade login-modal" id="login_Modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Anmelden</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{#with Session 'loginError'}}
+                            {{#if wrongPwd }}
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Kennwort falsch
+                                </div>
+                            {{/if}}
+                            {{#if wrongUser }}
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Benutzername falsch
+                                </div>
+                            {{/if}}
+                        {{/with}}
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                <input type="text" class="form-control" id="login_username"
+                                       name="login_username"
+                                       placeholder="Benutzername" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
+                                <input type="password" class="form-control" id="login_password"
+                                       name="login_password"
+                                       placeholder="Kennwort" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success pull-right">Anmelden</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="login_register_btn" type="button" class="btn btn-link" data-toggle="modal"
+                                data-target="#register_Modal" data-dismiss="modal">Registrieren
+                        </button>
+                        <button id="login_forgot_pw_btn" type="button" class="btn btn-link" data-toggle="modal"
+                                data-target="#register_Modal" data-dismiss="modal">Kennwort vergessen?
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </form>
+</template>
+
+<template name="register_Modal">
+    <form id="register_Modal_form">
+        <div class="modal fade login-modal" id="register_Modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Registrieren</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{#with Session 'regError'}}
+                            {{#if pws_dont_match }}
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Kennwörter stimmen nicht überein
+                                </div>
+                            {{/if}}
+                            {{#if user_already_exits }}
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Benutzername existiert bereits
+                                </div>
+                            {{/if}}
+                        {{/with}}
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-user"></i></span>
+                                <input type="text" class="form-control" id="reg_username"
+                                       name="reg_username"
+                                       placeholder="Benutzername" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-envelope"></i></span>
+                                <input type="text" class="form-control" id="reg_email"
+                                       name="reg_email"
+                                       placeholder="E-mail-Adresse">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
+                                <input type="password" class="form-control" id="password"
+                                       name="password"
+                                       placeholder="Kennwort" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
+                                <input type="password" class="form-control" id="password2"
+                                       name="password2"
+                                       placeholder="Kennwort (wiederholen)" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success pull-right">Registrieren</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="back_to_login_btn" type="button" class="btn btn-link" data-toggle="modal"
+                                data-target="#login_Modal" data-dismiss="modal">Zurück zum Login
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </form>
+</template>
+
+<template name="addTag_Modal">
+    <form id="addTag_Modal_Form">
+        <div class="modal fade" id="addTag_Modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Tag hinzufügen</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="addTag_text">Titel</label>
+                            <input type="text" class="form-control" id="addTag_text" name="text" placeholder="Titel">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary pull-right">Hinzufügen</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </form>
 </template>
