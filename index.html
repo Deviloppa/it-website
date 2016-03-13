@@ -1,95 +1,92 @@
-<template name="home">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>IT Website</title>
-        <link href="css/style.css" rel="stylesheet">
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IT Website</title>
+</head>
 
-    <body>
-    <div class="container-fluid">
-        {{> navbar }}
-        <div class="row">
-            <div class="col-md-12">
-                <h1>Tags
-                    <small>Internet Technologien Website</small>
-                </h1>
-            </div>
+<body>
+<div class="container-fluid">
+    {{> navbar }}
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Tags
+                <small>Internet Technologien Website</small>
+            </h1>
         </div>
-        <div class="row">
-            <div class="col-md-8">
-                <br><br>
-                <!-- TODO: reactive table verwenden -->
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Titel</th>
-                        <th>User</th> <!--Beschreibung vorl�ufig raus-->
-                        <th>Datum</th>
-                        <th>GPS Daten</th>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Titel</th>
+                    <th>User</th> <!--Beschreibung vorl�ufig raus-->
+                    <th>Beschreibung</th>
+                    <th>Datum</th>
+                    <th>GPS Daten</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each tags}}
+                    <tr class="previewMap" data-id="{{_id}}">
+                        <!--  <td>{{_id}}</td> -->
+                        <td> {{titel}}</td>
+                        <td><strong>{{username}}</strong></td>
+                        <td> {{formatDesc description}} </td>
+                        <td>{{formatDate createdAt}}</td>
+                        <td>{{position1}} , {{position2}}</td>
+                        <td>
+                            {{#if isOwner}}
+                                <span class="glyphicon glyphicon-trash delete"></span>
+                            {{/if}}
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {{#each tags}}
-                        <tr class="previewMap" data-id="{{_id}}">
-                            <td>{{_id}}</td>
-                            <td>{{> tag}}</td>
-                            <td><strong>{{username}}</strong></td>
-                            <td>{{formatDate createdAt}}</td>
-                            <td>{{position1}} , {{position2}}</td>
-                        </tr>
-                    {{/each}}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-md-4">
-                <h4>Heading</h4>
-                {{#with Session 'currentTag'}}
-                    <table class="table2">
-                        <tr>
-                            <td>Datum:</td>
-                            <td>{{formatDate createdAt}}</td>
-                        </tr>
-                        <tr>
-                            <td>GPS Daten:</td>
-                            <td>{{position1}}, {{position2}}</td>
-                        </tr>
-                    </table>
-                {{/with}}
-                <div class="row">
-                    <div class="col-md-12" style="border-top: 1px solid black;">
-                        {{> map}}
-                    </div>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <h3>Detail Vorschau</h3>
+            {{#with Session 'currentTag'}}
+                <dl>
+                    <dt>Author</dt>
+                    <dd>{{username}}</dd>
+                    <dt>Datum</dt>
+                    <dd>{{formatDate createdAt}}</dd>
+                    <dt>GPS Daten</dt>
+                    <dd>{{position1}}, {{position2}}</dd>
+                    <dt>Beschreibung</dt>
+                    <dd>{{description}}</dd>
+                </dl>
+            {{/with}}
+            <div class="row">
+                <div class="col-md-12" style="border-top: 1px solid black;">
+                    {{> map}}
                 </div>
             </div>
         </div>
     </div>
-    {{> addTag_Modal}}
-    {{> login_Modal}}
-    {{> register_Modal}}
-    </body>
-</template>
+</div>
+{{> addTag_Modal}}
+{{> login_Modal}}
+{{> register_Modal}}
+{{> lostPW_Modal}}
+<footer>
+    <p>Copyright &copy; IT16, 2016.</p>
+</footer>
+</body>
 
 <template name="map">
     <h4>Google Maps Kartenvorschau</h4>
     <div class="map-container">
-        {{> googleMap name="exampleMap" options=geoLocationMapOptions}}
+       {{> googleMap name="map" options=geoLocationMapOptions}}
     </div>
 </template>
 
-<template name="main">
-    {{> yield}}
-    <hr/>
-     <p>Copyright &copy; IT16, 2016.</p>
-</template>
-
 <template name="tag">
-    <span class="text">{{text}}</span>
-    {{#if isOwner}}
-        <button class="glyphicon glyphicon-remove delete" aria-hidden="true"></button>
-    {{/if}}
+
 </template>
 
 <template name="navbar">
@@ -110,17 +107,20 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 {{#if currentUser}}
-                    <button id="logout" type="button" class="btn btn-danger navbar-btn navbar-right">Abmelden
-                    </button>
+                    <ul class="nav navbar-nav navbar-right">
+                        <button id="logout" type="button" class="btn btn-danger navbar-btn">Abmelden
+                        </button>
+                        <p class="navbar-text">Eingeloggt als {{currentUser.username}}</p>
+                    </ul>
                     <button type="button" class="btn btn-primary navbar-btn navbar-left" data-toggle="modal"
                             data-target="#addTag_Modal">
                         Tag eintragen
                     </button>
                     <form class="navbar-form navbar-left" role="search">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search">
+                            <input type="text" class="form-control" name="inputSearch" value="{{searchQuery}}" placeholder="Suchen">
                         </div>
-                        <button type="submit" class="btn btn-default">Submit</button>
+                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
                     </form>
                 {{else}}
                     <button type="button" class="btn btn-primary navbar-btn navbar-right" data-toggle="modal"
@@ -130,151 +130,6 @@
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
-</template>
-
-<template name="login_Modal">
-    <form id="login_Modal_form">
-        <div class="modal fade login-modal" id="login_Modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title">Anmelden</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{#with Session 'loginError'}}
-                            {{#if wrongPwd }}
-                                <div class="alert alert-danger" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                    <span class="sr-only">Error:</span>
-                                    Kennwort falsch
-                                </div>
-                            {{/if}}
-                            {{#if wrongUser }}
-                                <div class="alert alert-danger" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                    <span class="sr-only">Error:</span>
-                                    Benutzername falsch
-                                </div>
-                            {{/if}}
-                        {{/with}}
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                                <input type="text" class="form-control" id="login_username"
-                                       name="login_username"
-                                       placeholder="Benutzername" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i
-                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
-                                <input type="password" class="form-control" id="login_password"
-                                       name="login_password"
-                                       placeholder="Kennwort" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-success pull-right">Anmelden</button>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="login_register_btn" type="button" class="btn btn-link" data-toggle="modal"
-                                data-target="#register_Modal" data-dismiss="modal">Registrieren
-                        </button>
-                        <button id="login_forgot_pw_btn" type="button" class="btn btn-link" data-toggle="modal"
-                                data-target="#register_Modal" data-dismiss="modal">Kennwort vergessen?
-                        </button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-    </form>
-</template>
-
-<template name="register_Modal">
-    <form id="register_Modal_form">
-        <div class="modal fade login-modal" id="register_Modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title">Registrieren</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{#with Session 'regError'}}
-                            {{#if pws_dont_match }}
-                                <div class="alert alert-danger" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                    <span class="sr-only">Error:</span>
-                                    Kennwörter stimmen nicht überein
-                                </div>
-                            {{/if}}
-                            {{#if user_already_exits }}
-                                <div class="alert alert-danger" role="alert">
-                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                    <span class="sr-only">Error:</span>
-                                    Benutzername existiert bereits
-                                </div>
-                            {{/if}}
-                        {{/with}}
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i
-                                        class="glyphicon glyphicon glyphicon-user"></i></span>
-                                <input type="text" class="form-control" id="reg_username"
-                                       name="reg_username"
-                                       placeholder="Benutzername" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i
-                                        class="glyphicon glyphicon glyphicon-envelope"></i></span>
-                                <input type="text" class="form-control" id="reg_email"
-                                       name="reg_email"
-                                       placeholder="E-mail-Adresse">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i
-                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
-                                <input type="password" class="form-control" id="password"
-                                       name="password"
-                                       placeholder="Kennwort" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon"><i
-                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
-                                <input type="password" class="form-control" id="password2"
-                                       name="password2"
-                                       placeholder="Kennwort (wiederholen)" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-success pull-right">Registrieren</button>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="back_to_login_btn" type="button" class="btn btn-link" data-toggle="modal"
-                                data-target="#login_Modal" data-dismiss="modal">Zurück zum Login
-                        </button>
-                    </div>
-                </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-    </form>
 </template>
 
 <template name="addTag_Modal">
@@ -290,8 +145,25 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="addTag_text">Titel</label>
-                            <input type="text" class="form-control" id="addTag_text" name="text" placeholder="Titel">
+                            <label>Author: {{currentUser.username}}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Datum: </label>
+                        </div>
+                        <div class="form-group">
+                            <label>GPS Daten: </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="addTag_titel">Titel</label>
+                            <input type="text" class="form-control" id="addTag_titel" name="titel" placeholder="Titel" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addTag_description">Beschreibung</label>
+                            <input type="text" class="form-control" id="addTag_description" name="description"
+                                   placeholder="Beschreibung" required>
+                        </div>
+                        <div class="form-group">
+                            <input id="input-1" type="file" class="file">
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary pull-right">Hinzufügen</button>

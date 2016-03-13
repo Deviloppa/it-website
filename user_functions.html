@@ -1,0 +1,181 @@
+<template name="login_Modal">
+    <form id="login_Modal_form">
+        <div class="modal fade login-modal" id="login_Modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Anmelden</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{#with Session 'loginError'}}
+                            {{#if wrongPwd }}
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Kennwort falsch
+                                </div>
+                            {{/if}}
+                            {{#if wrongUser }}
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Benutzername falsch
+                                </div>
+                            {{/if}}
+                        {{/with}}
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                <input type="text" class="form-control" id="login_username"
+                                       name="login_username"
+                                       placeholder="Benutzername" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
+                                <input type="password" class="form-control" id="login_password"
+                                       name="login_password"
+                                       placeholder="Kennwort" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success pull-right">Anmelden</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="login_register_btn" type="button" class="btn btn-link" data-toggle="modal"
+                                data-target="#register_Modal" data-dismiss="modal">Registrieren
+                        </button>
+                        <button id="login_forgot_pw_btn" type="button" class="btn btn-link" data-toggle="modal"
+                                data-target="#lostPW_Modal" data-dismiss="modal">Kennwort vergessen?
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </form>
+</template>
+
+<template name="register_Modal">
+    <form id="register_Modal_form">
+        <div class="modal fade login-modal" id="register_Modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Registrieren</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{#with Session 'regError'}}
+                            {{#if pws_dont_match }}
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Kennwörter stimmen nicht überein
+                                </div>
+                            {{/if}}
+                            {{#if user_already_exits }}
+                                <div class="alert alert-danger" role="alert">
+                                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                    <span class="sr-only">Error:</span>
+                                    Benutzername existiert bereits
+                                </div>
+                            {{/if}}
+                        {{/with}}
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-user"></i></span>
+                                <input type="text" class="form-control" id="reg_username"
+                                       name="reg_username"
+                                       placeholder="Benutzername" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-envelope"></i></span>
+                                <input type="text" class="form-control" id="reg_email"
+                                       name="reg_email"
+                                       placeholder="E-mail-Adresse">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
+                                <input type="password" class="form-control" id="password"
+                                       name="password"
+                                       placeholder="Kennwort" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-lock"></i></span>
+                                <input type="password" class="form-control" id="password2"
+                                       name="password2"
+                                       placeholder="Kennwort (wiederholen)" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success pull-right">Registrieren</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="back_to_login_btn" type="button" class="btn btn-link" data-toggle="modal"
+                                data-target="#login_Modal" data-dismiss="modal">Zurück zum Login
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </form>
+</template>
+
+<template name="lostPW_Modal">
+    <form id="lostPW_Modal_form">
+        <div class="modal fade login-modal" id="lostPW_Modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Kennwort vergessen</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i
+                                        class="glyphicon glyphicon glyphicon-envelope"></i></span>
+                                <input type="text" class="form-control" id="reg_email"
+                                       name="reg_email"
+                                       placeholder="E-mail-Adresse">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success pull-right">Password senden</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="back_to_login_btn" type="button" class="btn btn-link" data-toggle="modal"
+                                data-target="#login_Modal" data-dismiss="modal">Zurück zum Login
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </form>
+</template>
