@@ -16,7 +16,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-6">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -24,7 +24,6 @@
                     <th>User</th> <!--Beschreibung vorl�ufig raus-->
                     <th>Beschreibung</th>
                     <th>Datum</th>
-                    <th>GPS Daten</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -36,7 +35,6 @@
                         <td><strong>{{username}}</strong></td>
                         <td> {{formatDesc description}} </td>
                         <td>{{formatDate createdAt}}</td>
-                        <td>{{position1}} , {{position2}}</td>
                         <td>
                             {{#if isOwner}}
                                 <span class="glyphicon glyphicon-trash delete"></span>
@@ -47,22 +45,33 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <h3>Detail Vorschau</h3>
-            {{#with Session 'currentTag'}}
-                <dl>
-                    <dt>Author</dt>
-                    <dd>{{username}}</dd>
-                    <dt>Datum</dt>
-                    <dd>{{formatDate createdAt}}</dd>
-                    <dt>GPS Daten</dt>
-                    <dd>{{position1}}, {{position2}}</dd>
-                    <dt>Beschreibung</dt>
-                    <dd>{{description}}</dd>
-                </dl>
-            {{/with}}
             <div class="row">
-                <div class="col-md-12" style="border-top: 1px solid black;">
+                {{#with Session 'currentTag'}}
+                    <div class="col-md-4">
+                        <dl>
+                            <dt>Author</dt>
+                            <dd>{{username}}</dd>
+                            <dt>Datum</dt>
+                            <dd>{{formatDate createdAt}}</dd>
+                            <dt>GPS Daten</dt>
+                            <dd>{{latLng.lat}} , {{latLng.lng}}</dd>
+                            <dt>Beschreibung</dt>
+                            <dd>{{description}}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-8">
+                        {{#with Image image}}
+                            <a href="{{this.url uploading='/images/uploading.gif' storing='/images/storing.gif'}}" data-toggle="lightbox">
+                                <img src="{{this.url store='thumbs' uploading='/images/uploading.gif' storing='/images/storing.gif'}}" alt="alt-text" class="img-responsive thumbnail" />
+                            </a>
+                        {{/with}}
+                    </div>
+                {{/with}}
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     {{> map}}
                 </div>
             </div>
@@ -79,9 +88,8 @@
 </body>
 
 <template name="map">
-    <h4>Google Maps Kartenvorschau</h4>
     <div class="map-container">
-       {{> googleMap name="map" options=geoLocationMapOptions}}
+        {{> googleMap name="map" options=geoLocationMapOptions}}
     </div>
 </template>
 
@@ -107,26 +115,51 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 {{#if currentUser}}
-                    <ul class="nav navbar-nav navbar-right">
-                        <button id="logout" type="button" class="btn btn-danger navbar-btn">Abmelden
-                        </button>
-                        <p class="navbar-text">Eingeloggt als {{currentUser.username}}</p>
-                    </ul>
                     <button type="button" class="btn btn-primary navbar-btn navbar-left" data-toggle="modal"
                             data-target="#addTag_Modal">
                         Tag eintragen
                     </button>
                     <form class="navbar-form navbar-left" role="search">
                         <div class="form-group">
-                            <input type="text" class="form-control" name="inputSearch" value="{{searchQuery}}" placeholder="Suchen">
+                            <input type="text" class="form-control" name="inputSearch" value="{{searchQuery}}"
+                                   placeholder="Suchen">
                         </div>
-                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>
+                        </button>
                     </form>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <button id="logout" type="button" class="btn btn-danger navbar-btn">Abmelden
+                        </button>
+                        <p class="navbar-text">Eingeloggt als {{currentUser.username}}</p>
+                    </ul>
                 {{else}}
-                    <button type="button" class="btn btn-primary navbar-btn navbar-right" data-toggle="modal"
-                            data-target="#login_Modal">Anmelden
-                    </button>
+                    <ul class="navbar-nav nav navbar-right">
+                        <button type="button" class="btn btn-primary navbar-btn " data-toggle="modal"
+                                data-target="#login_Modal">Anmelden
+                        </button>
+                    </ul>
+                    <ul class="navbar-nav nav navbar-right">
+                        <p class="navbar-text"></p>
+                    </ul>
                 {{/if}}
+                <ul class="navbar-nav nav navbar-right">
+                    <form class="form-inline">
+                        <form class="form-group">
+                            <p class="navbar-text">Radius</p>
+                            <select class="form-control navbar-btn" id="radius">
+                                <option value="50,17">50 m</option>
+                                <option value="100,16">100 m</option>
+                                <option value="300,15">300 m</option>
+                                <option value="500,14">500 m</option>
+                                <option value="1000,14">1000 m</option>
+                                <option value="2000,13">2000 m</option>
+                                <option value="5000,11">5000 m</option>
+                            </select>
+                        </form>
+                    </form>
+                </ul>
+
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
@@ -148,14 +181,15 @@
                             <label>Author: {{currentUser.username}}</label>
                         </div>
                         <div class="form-group">
-                            <label>Datum: </label>
+                            <label>Datum: {{formatDate datum}}</label>
                         </div>
                         <div class="form-group">
-                            <label>GPS Daten: </label>
+                            <label>GPS Daten: {{formatGps gpsCords}}</label>
                         </div>
                         <div class="form-group">
                             <label for="addTag_titel">Titel</label>
-                            <input type="text" class="form-control" id="addTag_titel" name="titel" placeholder="Titel" required>
+                            <input type="text" class="form-control" id="addTag_titel" name="titel" placeholder="Titel"
+                                   required>
                         </div>
                         <div class="form-group">
                             <label for="addTag_description">Beschreibung</label>
@@ -163,7 +197,7 @@
                                    placeholder="Beschreibung" required>
                         </div>
                         <div class="form-group">
-                            <input id="input-1" type="file" class="file">
+                            <input id="input-1" type="file" class="file" name="file">
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary pull-right">Hinzufügen</button>

@@ -28,3 +28,7 @@ accounts-ui
 accounts-password
 underscore
 momentjs:moment
+cfs:standard-packages
+cfs:gridfs
+cfs:graphicsmagick
+tsega:bootstrap3-lightbox
