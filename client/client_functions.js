@@ -61,12 +61,17 @@ Template.registerHelper('formatDesc', function (description) {
     return isTooLong ? s_ + '...' : s_;
 });
 
-Template.registerHelper('formatGps', function (latLng) {
+Template.registerHelper('formatGpsAddTag', function (latLng) {
     if (!_.isUndefined(latLng) && !_.isNull(latLng) && _.has(latLng, 'lat') && _.has(latLng, 'lng')) {
         return latLng.lat + ", " + latLng.lng;
     }
     return "-";
 });
+
+Template.registerHelper('formatGpsPreview', function (coordinates) {
+    return  coordinates[1] + ", " + coordinates[0];
+});
+
 
 Template.body.onCreated(function () {
     // We can use the `ready` callback to interact with the map API once the map is ready.

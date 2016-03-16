@@ -56,7 +56,7 @@
                             <dt>Datum</dt>
                             <dd>{{formatDate createdAt}}</dd>
                             <dt>GPS Daten</dt>
-                            <dd>{{latLng.lat}} , {{latLng.lng}}</dd>
+                            <dd>{{formatGpsPreview latLng.coordinates}}</dd>
                             <dt>Beschreibung</dt>
                             <dd>{{description}}</dd>
                         </dl>
@@ -182,7 +182,7 @@
                             <label>Datum: {{formatDate datum}}</label>
                         </div>
                         <div class="form-group">
-                            <label>GPS Daten: {{formatGps gpsCords}}</label>
+                            <label>GPS Daten: {{formatGpsAddTag gpsCords}}</label>
                         </div>
                         <div class="form-group">
                             <label for="addTag_titel">Titel</label>
