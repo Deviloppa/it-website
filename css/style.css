@@ -30,11 +30,9 @@ body {
     height: 24px;
 }
 footer {
-    background: #bbb;
     width: 100%;
     position: fixed;
     left: 0;
     bottom: 0;
-    border-bottom:1px solid #666;
-    border-top:1px solid #666;
+    border-top:1px solid black;
 }

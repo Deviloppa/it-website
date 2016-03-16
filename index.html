@@ -83,7 +83,7 @@
 {{> register_Modal}}
 {{> lostPW_Modal}}
 <footer>
-    <p>Copyright &copy; IT16, 2016.</p>
+    <h5>Copyright &copy; IT16, 2016.</h5>
 </footer>
 </body>
 
@@ -109,7 +109,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Home</a>
+                <a class="navbar-brand" href="/">Home</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -119,15 +119,13 @@
                             data-target="#addTag_Modal">
                         Tag eintragen
                     </button>
-                    <form class="navbar-form navbar-left" role="search">
-                        <div class="form-group">
+                    <form class="navbar-form navbar-left" role="search" onsubmit="return false;">
+                        <div class="input-group">
+                           <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                             <input type="text" class="form-control" name="inputSearch" value="{{searchQuery}}"
                                    placeholder="Suchen">
                         </div>
-                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span>
-                        </button>
                     </form>
-
                     <ul class="nav navbar-nav navbar-right">
                         <button id="logout" type="button" class="btn btn-danger navbar-btn">Abmelden
                         </button>
