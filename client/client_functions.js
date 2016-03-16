@@ -144,10 +144,8 @@ Template.body.onCreated(function () {
 
 Template.map.helpers({
     geoLocationMapOptions: function () {
-        // Geolocation
         var latLng = Geolocation.latLng();
-        //console.log(Geolocation.currentLocation());
-        // Make sure the maps API has loaded
+        // Sicherstellen dass die Map
         if (GoogleMaps.loaded() && latLng) {
             // Map initialization options
             return {
@@ -260,30 +258,6 @@ Template.navbar.events({
         Meteor.logout();
     },
 
-    /*   "submit": function(event){
-     event.preventDefault();
-     console.log("Navbar klick");
-     var input = event.target.inputSearch.value;
-     if (input.trim().length == 0) {
-     Session.set('currentTags', null);
-     return;
-     }
-
-     // http://stackoverflow.com/questions/3115150/how-to-escape-regular-expression-special-characters-using-javascript
-     // Sichert Eingabe ab
-     input = input.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-     var regex = '/.*' + input + '.* /i'; // i = keine Groß- und Kleinschreibung
-     var tags = Tags.find({
-     "$or": [
-     {"titel": { "$regex": regex}},
-     {"description": { "$regex": regex}}
-     ]
-     }).fetch();
-     Session.set('currentTags', tags);
-     console.log(tags);
-     return tags;
-     }*/
-
     // Sucheingabe in der Navbar
     'keyup [type=text]': function (event, template) {
         event.preventDefault();
@@ -299,18 +273,12 @@ Template.navbar.events({
         Session.set('mapZoom', parseInt(option[1]));
     }
 });
+
 Template.navbar.helpers({
     searchQuery: function () {
         return Session.get('searchQuery');
     }
 });
-
-/*
- Tracker.autorun(function() {
- if (Session.get('searchQuery')) {
- Meteor.subscribe('tagSearch', Session.get('searchQuery'));
- }
- });*/
 
 $(document).ready(function () {
     // delegate calls to data-toggle="lightbox"

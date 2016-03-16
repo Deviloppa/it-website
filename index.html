@@ -49,7 +49,7 @@
             <h3>Detail Vorschau</h3>
             <div class="row">
                 {{#with Session 'currentTag'}}
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <dl>
                             <dt>Author</dt>
                             <dd>{{username}}</dd>
@@ -61,7 +61,7 @@
                             <dd>{{description}}</dd>
                         </dl>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-7">
                         {{#with Image image}}
                             <a href="{{this.url uploading='/images/uploading.gif' storing='/images/storing.gif'}}" data-toggle="lightbox">
                                 <img src="{{this.url store='thumbs' uploading='/images/uploading.gif' storing='/images/storing.gif'}}" alt="alt-text" class="img-responsive thumbnail" />
@@ -195,7 +195,7 @@
                         </div>
                         <div class="form-group">
                             <label for="addTag_description">Beschreibung</label>
-                            <textarea type="text" class="form-control" id="addTag_description" name="description"
+                            <textarea maxlength="200" type="text" class="form-control" id="addTag_description" name="description"
                                    placeholder="Beschreibung" required></textarea>
                         </div>
                         <div class="form-group">
