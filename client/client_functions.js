@@ -146,7 +146,7 @@ Template.map.helpers({
     geoLocationMapOptions: function () {
         // Geolocation
         var latLng = Geolocation.latLng();
-        console.log(Geolocation.currentLocation());
+        //console.log(Geolocation.currentLocation());
         // Make sure the maps API has loaded
         if (GoogleMaps.loaded() && latLng) {
             // Map initialization options
@@ -187,13 +187,25 @@ Template.addTag_Modal.events({
         var titel = event.target.titel.value;
         var desc = event.target.description.value;
         var _latLng = Geolocation.latLng();
-        var latLng = {
-            type: "Point",
-            "coordinates": [
-                _latLng.lng,
-                _latLng.lat
-            ]
-        };
+        var coords = event.target.koordinaten.value.trim();
+        coords = coords.split(" ");
+        if (coords == "") {
+            var latLng = {
+                type: "Point",
+                "coordinates": [
+                    _latLng.lng,
+                    _latLng.lat
+                ]
+            };
+        } else {
+            var latLng = {
+                type: "Point",
+                "coordinates": [
+                    parseFloat(coords[1]),
+                    parseFloat(coords[0])
+                ]
+            };
+        }
 
         var files = event.target.file.files;
         if (files.length == 0) {
@@ -227,6 +239,7 @@ Template.addTag_Modal.events({
         // Clear form
         event.target.titel.value = "";
         event.target.description.value = "";
+        event.target.koordinaten.value = "";
 
         $('#addTag_Modal').modal('hide');
     }

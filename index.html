@@ -185,14 +185,18 @@
                             <label>GPS Daten: {{formatGpsAddTag gpsCords}}</label>
                         </div>
                         <div class="form-group">
+                            <label for="addTag_titel">Debug: Koordinaten</label>
+                            <input type="text" class="form-control" id="addTag_koordinaten" name="koordinaten" placeholder="Koordinaten">
+                        </div>
+                        <div class="form-group">
                             <label for="addTag_titel">Titel</label>
                             <input type="text" class="form-control" id="addTag_titel" name="titel" placeholder="Titel"
                                    required>
                         </div>
                         <div class="form-group">
                             <label for="addTag_description">Beschreibung</label>
-                            <input type="text" class="form-control" id="addTag_description" name="description"
-                                   placeholder="Beschreibung" required>
+                            <textarea type="text" class="form-control" id="addTag_description" name="description"
+                                   placeholder="Beschreibung" required></textarea>
                         </div>
                         <div class="form-group">
                             <input id="input-1" type="file" class="file" name="file">
