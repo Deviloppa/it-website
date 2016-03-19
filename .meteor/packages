@@ -17,10 +17,8 @@ es5-shim                # ECMAScript 5 compatibility for older browsers.
 ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 check
-audit-argument-checks
+#audit-argument-checks
 
-autopublish             # Publish all data to the clients (for prototyping)
-insecure                # Allow all DB writes from clients (for prototyping)
 twbs:bootstrap
 dburles:google-maps
 mdg:geolocation
@@ -31,4 +29,6 @@ momentjs:moment
 cfs:standard-packages
 cfs:gridfs
 cfs:graphicsmagick
+cfs:ejson-file
+
 tsega:bootstrap3-lightbox

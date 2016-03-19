@@ -1,9 +1,6 @@
 // Konstanten
-var TEST_COUNTER = 5; // Counter für Testzwecke, um verschiedene GPS Werte zu bekommen
 var mapMarkers = {};
-
 var mapCircle = null;
-
 
 Meteor.startup(function () {
     Session.set('mapRadius', 50);
@@ -21,38 +18,6 @@ Template.registerHelper('Image', function (id) {
     return Images.findOne(id);
 });
 
-Template.registerHelper('tags', function () {
-        var lngLat = Geolocation.latLng();
-        var regexp = RegExp.escape(Session.get('searchQuery'));
-        var regexp = new RegExp(regexp, 'i');
-        if (!_.isUndefined(lngLat) && !_.isNull(lngLat) && _.has(lngLat, 'lat') && _.has(lngLat, 'lng')) {
-            return Tags.find({
-                "$or": [
-                    {"titel": regexp},
-                    {"description": regexp},
-                    {"username": regexp}
-                ],
-                'latLng': {
-                    $near: {
-                        $geometry: {
-                            type: 'Point', coordinates: [lngLat.lng, lngLat.lat]
-                        },
-                        $maxDistance: Session.get('mapRadius')
-                    }
-                }
-            })
-        } else {
-            return Tags.find({
-                "$or": [
-                    {"titel": regexp},
-                    {"description": regexp},
-                    {"username": regexp}
-                ]
-            });
-        }
-    }
-);
-
 Template.registerHelper('formatDesc', function (description) {
     var n = 40;
     var isTooLong = description.length > n;
@@ -69,7 +34,57 @@ Template.registerHelper('formatGpsAddTag', function (latLng) {
 });
 
 Template.registerHelper('formatGpsPreview', function (coordinates) {
-    return  coordinates[1] + ", " + coordinates[0];
+    return coordinates[1] + ", " + coordinates[0];
+});
+
+Template.map.helpers({
+    geoLocationMapOptions: function () {
+        var latLng = Geolocation.latLng();
+        // Sicherstellen dass die Map
+        if (GoogleMaps.loaded() && latLng) {
+            // Map initialization options
+            return {
+                center: new google.maps.LatLng(latLng.lat, latLng.lng),
+                zoom: 17
+            };
+        }
+    }
+});
+
+Template.navbar.helpers({
+    searchQuery: function () {
+        return Session.get('searchQuery');
+    }
+});
+
+Template.body.helpers({
+    isOwner: function () {
+        return this.owner === Meteor.userId();
+    }
+});
+
+
+Tracker.autorun(function() {
+    var lngLat = Geolocation.latLng();
+    var lng = null, lat = null;
+    if (!_.isUndefined(lngLat) && !_.isNull(lngLat)) {
+        if (_.has(lngLat, 'lat')) lat = lngLat.lat;
+        if (_.has(lngLat, 'lng')) lng = lngLat.lng;
+    }
+
+    Meteor.subscribe("tags",
+        Session.get('searchQuery'),
+        lng, lat,
+        Session.get('mapRadius')
+    );
+});
+Tracker.autorun(function() {
+    Meteor.subscribe('photo', Session.get('currentTag').image);
+});
+
+
+Template.registerHelper('tags', function () {
+    return Tags.find({});
 });
 
 
@@ -142,25 +157,11 @@ Template.body.onCreated(function () {
     });
 });
 
-Template.map.helpers({
-    geoLocationMapOptions: function () {
-        var latLng = Geolocation.latLng();
-        // Sicherstellen dass die Map
-        if (GoogleMaps.loaded() && latLng) {
-            // Map initialization options
-            return {
-                center: new google.maps.LatLng(latLng.lat, latLng.lng),
-                zoom: 17
-            };
-        }
-    }
-});
 
 Template.body.events({
     "click .previewMap": function (event) {
         // Prevent default browser form submit
         event.preventDefault();
-        //console.log("clicked");
         var tag_id = $(event.currentTarget).data('id');
         var tag = Tags.findOne(tag_id);
 
@@ -168,15 +169,14 @@ Template.body.events({
     },
 
     "click .delete": function () {
-        Tags.remove(this._id);
+        Meteor.call("deleteTag", this._id, function(error, result) {
+            if (error) {
+                alert(error);
+            }
+        });
     }
 });
 
-Template.body.helpers({
-    isOwner: function () {
-        return this.owner === Meteor.userId();
-    }
-});
 
 Template.addTag_Modal.events({
     "submit #addTag_Modal_Form": function (event) {
@@ -186,58 +186,33 @@ Template.addTag_Modal.events({
         var desc = event.target.description.value;
         var _latLng = Geolocation.latLng();
         var coords = event.target.koordinaten.value.trim();
-        coords = coords.split(" ");
-        if (coords == "") {
-            var latLng = {
-                type: "Point",
-                "coordinates": [
-                    _latLng.lng,
-                    _latLng.lat
-                ]
-            };
-        } else {
-            var latLng = {
-                type: "Point",
-                "coordinates": [
-                    parseFloat(coords[1]),
-                    parseFloat(coords[0])
-                ]
-            };
-        }
 
         var files = event.target.file.files;
-        if (files.length == 0) {
-            Tags.insert({
-                titel: titel,
-                createdAt: new Date(),            // current time
-                owner: Meteor.userId(),           // _id of logged in user
-                username: Meteor.user().username,  // username of logged in user
-                description: desc,
-                image: null,
-                latLng: latLng
-            });
-        } else {
-            for (var i = 0, ln = files.length; i < ln; i++) {
-                Images.insert(files[i], function (err, fileObj) {
 
-                    // Insert a task into the collection
-                    Tags.insert({
-                        titel: titel,
-                        createdAt: new Date(),            // current time
-                        owner: Meteor.userId(),           // _id of logged in user
-                        username: Meteor.user().username,  // username of logged in user
-                        description: desc,
-                        image: fileObj._id,
-                        latLng: latLng
-                    });
+        if (files.length > 0) {
+            for (var i = 0, ln = files.length; i < ln; i++) {
+                var fsFile = new FS.File(files[i]);
+                fsFile.owner = Meteor.userId();
+                Images.insert(fsFile, function(err, fileObj) {
+                    if (err) {
+                        console.log(err);
+                        // TODO: Show error to user
+                    }
+                    Meteor.call("addTag", titel, desc, _latLng, fileObj, coords);
                 });
             }
+        } else {
+            Meteor.call("addTag", titel, desc, _latLng, null, coords);
         }
+
+
+
 
         // Clear form
         event.target.titel.value = "";
         event.target.description.value = "";
         event.target.koordinaten.value = "";
+        event.target.file.value = "";
 
         $('#addTag_Modal').modal('hide');
     }
@@ -271,12 +246,6 @@ Template.navbar.events({
         option = option.split(',');
         Session.set('mapRadius', parseInt(option[0]));
         Session.set('mapZoom', parseInt(option[1]));
-    }
-});
-
-Template.navbar.helpers({
-    searchQuery: function () {
-        return Session.get('searchQuery');
     }
 });
 
