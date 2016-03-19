@@ -27,4 +27,4 @@ App.setPreference('BackgroundColor', '0xff0000ff');
 App.setPreference('HideKeyboardFormAccessoryBar', true);
 
 App.accessRule("blob:*");
-App.accessRule("http://styre.de:2425/*");
+App.accessRule("http://ts.styre.de:2425/*");
