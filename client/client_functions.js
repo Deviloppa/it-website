@@ -79,7 +79,10 @@ Tracker.autorun(function() {
     );
 });
 Tracker.autorun(function() {
-    Meteor.subscribe('photo', Session.get('currentTag').image);
+    var tag = Session.get('currentTag')
+    if (!_.isUndefined(tag) && !_.isNull(tag)) {
+        Meteor.subscribe('photo',tag .image);
+    }
 });
 
 

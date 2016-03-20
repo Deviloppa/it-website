@@ -20,19 +20,6 @@ Images.allow({
 });
 
 Meteor.publish('tags', function(_regex, _lng, _lat, _radius) {
-    /*console.log(_regex);
-
-    check(_regex, Match.Optional(String));
-
-
-
-    check(_radius, Match.Where(function(val) {
-        check(val, Match.Integer);
-        return val > 1 && val < 5000;
-    }));*/
-
-
-
 
     var query = {};
 
