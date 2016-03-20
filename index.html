@@ -63,8 +63,10 @@
                     </div>
                     <div class="col-md-7">
                         {{#with Image image}}
-                            <a href="{{this.url uploading='/images/uploading.gif' storing='/images/storing.gif'}}" data-toggle="lightbox">
-                                <img src="{{this.url store='thumbs' uploading='/images/uploading.gif' storing='/images/storing.gif'}}" alt="alt-text" class="img-responsive thumbnail" />
+                            <a href="{{this.url uploading='/images/uploading.gif' storing='/images/storing.gif'}}"
+                               data-toggle="lightbox" data-type="image">
+                                <img src="{{this.url store='thumbs' uploading='/images/uploading.gif' storing='/images/storing.gif'}}"
+                                     alt="alt-text" class="img-responsive thumbnail"/>
                             </a>
                         {{/with}}
                     </div>
@@ -123,7 +125,7 @@
                     </button>
                     <form class="navbar-form navbar-left" role="search" onsubmit="return false;">
                         <div class="input-group">
-                           <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
                             <input type="text" class="form-control" name="inputSearch" value="{{searchQuery}}"
                                    placeholder="Suchen">
                         </div>
@@ -188,7 +190,8 @@
                         </div>
                         <div class="form-group">
                             <label for="addTag_titel">Debug: Koordinaten</label>
-                            <input type="text" class="form-control" id="addTag_koordinaten" name="koordinaten" placeholder="Koordinaten">
+                            <input type="text" class="form-control" id="addTag_koordinaten" name="koordinaten"
+                                   placeholder="Koordinaten">
                         </div>
                         <div class="form-group">
                             <label for="addTag_titel">Titel</label>
@@ -197,11 +200,21 @@
                         </div>
                         <div class="form-group">
                             <label for="addTag_description">Beschreibung</label>
-                            <textarea maxlength="200" type="text" class="form-control" id="addTag_description" name="description"
-                                   placeholder="Beschreibung" required></textarea>
+                            <textarea maxlength="200" type="text" class="form-control" id="addTag_description"
+                                      name="description"
+                                      placeholder="Beschreibung" required></textarea>
                         </div>
                         <div class="form-group">
                             <input id="input-1" type="file" class="file" name="file">
+
+                        </div>
+                        <div class="form-group">
+                           <span> oder </span>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default" id="takePhoto">
+                                <span class="glyphicon glyphicon glyphicon-camera"></span> Foto machen
+                            </button>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary pull-right">Hinzufügen</button>

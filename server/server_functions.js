@@ -125,28 +125,60 @@ Meteor.methods({
             };
         }
 
-        var cb = function(fileObj) {
-            // Insert a task into the collection
-            Tags.insert({
-                titel: _titel,
-                createdAt: new Date(),            // current time
-                owner: Meteor.userId(),           // _id of logged in user
-                username: Meteor.user().username,  // username of logged in user
-                description: _des,
-                image: fileObj._id,
-                latLng: latLng
-            }, function(err, _id) {
+        Future = Npm.require('fibers/future');
+        var future = new Future();
 
-            });
-        };
+        // Insert a task into the collection
+        Tags.insert({
+            titel: _titel,
+            createdAt: new Date(),            // current time
+            owner: Meteor.userId(),           // _id of logged in user
+            username: Meteor.user().username,  // username of logged in user
+            description: _des,
+            latLng: latLng
+        }, function(err, tag_id) {
+            if (err) {
+                return future.throw(err);
+            }
+            if (!_.isUndefined(_image) && !_.isNull(_image) && _.has(_image, '_id')) {
+                console.log('has images');
+                Tags.update(tag_id, {
+                    $set: {image: _image._id}
+                }, function(err, cnt) {
+                    if(err) {
+                        return future.throw(err);
+                    }
+                    future.return();
+                });
+            } else if (!_.isUndefined(_image) && !_.isNull(_image) && _image.indexOf(';base64') > 0) {
+                // Base64 encoded image
+                console.log('base64 image');
+                var fsFile = new FS.File();
+                fsFile.attachData(_image, function(err) {
+                    if(err) {
+                        return future.throw(err);
+                    }
+                    Images.insert(fsFile, function(err, fileObj) {
+                        if (err) {
+                            return future.throw(err);
+                        }
+                        Tags.update(tag_id, {
+                            $set: {image: fileObj._id}
+                        }, function(err, cnt) {
+                            if(err) {
+                                return future.throw(err);
+                            }
+                            future.return();
+                        });
+                    });
+                })
 
-        if (!_.isUndefined(_image) && !_.isNull(_image) && _.has(_image, '_id')) {
-            console.log('has images');
-            cb(_image);
-        } else {
-            console.log('has no images');
-            cb({_id: null});
-        }
+            } else {
+                console.log('has no images');
+                future.return();
+            }
+        });
 
+        return future.wait();
     }
 });

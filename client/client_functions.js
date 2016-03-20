@@ -189,7 +189,6 @@ Template.addTag_Modal.events({
         var desc = event.target.description.value;
         var _latLng = Geolocation.latLng();
         var coords = event.target.koordinaten.value.trim();
-
         var files = event.target.file.files;
 
         if (files.length > 0) {
@@ -205,20 +204,33 @@ Template.addTag_Modal.events({
                 });
             }
         } else {
-            Meteor.call("addTag", titel, desc, _latLng, null, coords);
+            var photo = Session.get('photo');
+            if(_.isUndefined(photo) || _.isNull(photo)) {
+                Meteor.call("addTag", titel, desc, _latLng, null, coords);
+            } else {
+                Meteor.call("addTag", titel, desc, _latLng, photo, coords);
+            }
         }
-
-
-
 
         // Clear form
         event.target.titel.value = "";
         event.target.description.value = "";
         event.target.koordinaten.value = "";
         event.target.file.value = "";
+        Session.set('photo', null);
 
         $('#addTag_Modal').modal('hide');
-    }
+    },
+     "click #takePhoto": function() {
+
+         MeteorCamera.getPicture({}, function(error, data){
+            if(error){
+                alert(error);
+            }
+            Session.set('photo', data);
+             //console.log(data);
+         });
+     }
 });
 
 Template.addTag_Modal.helpers({

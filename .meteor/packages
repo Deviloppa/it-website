@@ -30,5 +30,5 @@ cfs:standard-packages
 cfs:gridfs
 cfs:graphicsmagick
 cfs:ejson-file
-
 tsega:bootstrap3-lightbox
+mdg:camera
