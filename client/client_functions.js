@@ -223,7 +223,7 @@ Template.addTag_Modal.events({
     },
      "click #takePhoto": function() {
 
-         MeteorCamera.getPicture({}, function(error, data){
+         MeteorCamera.getPicture({width: 1280, height: 1024, quality: 49}, function(error, data){
             if(error){
                 alert(error);
             }

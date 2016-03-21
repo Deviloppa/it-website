@@ -32,3 +32,4 @@ App.accessRule("http://maps.googleapis.com/*");
 App.accessRule("https://maps.googleapis.com/*");
 App.accessRule("http://fonts.googleapis.com/*");
 App.accessRule("https://fonts.googleapis.com/*");
+App.accessRule("*");
