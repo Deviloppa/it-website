@@ -3,10 +3,10 @@
 App.info({
   id: 'de.it.meteor',
   name: 'Meteor IT',
-  description: 'Get über power in one button click',
+  description: 'Die super coole App',
   author: 'IT Development Group',
-  email: 'contact@example.com',
-  website: 'http://example.com'
+  email: 'it-developement@cooleapp.de',
+  website: 'www.ts.styre.de:2425'
 });
 
 // Set up resources such as icons and launch screens.
@@ -28,3 +28,7 @@ App.setPreference('HideKeyboardFormAccessoryBar', true);
 
 App.accessRule("blob:*");
 App.accessRule("http://ts.styre.de:2425/*");
+App.accessRule("http://maps.googleapis.com/*");
+App.accessRule("https://maps.googleapis.com/*");
+App.accessRule("http://fonts.googleapis.com/*");
+App.accessRule("https://fonts.googleapis.com/*");
