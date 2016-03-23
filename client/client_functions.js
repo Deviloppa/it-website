@@ -41,9 +41,9 @@ Template.registerHelper('formatGpsPreview', function (coordinates) {
 Template.map.helpers({
     geoLocationMapOptions: function () {
         var latLng = Geolocation.latLng();
-        // Sicherstellen dass die Map
+        // Sicherstellen dass die Map geladen ist
         if (GoogleMaps.loaded() && latLng) {
-            // Map initialization options
+            // Map Optionen
             return {
                 center: new google.maps.LatLng(latLng.lat, latLng.lng),
                 zoom: 17
@@ -94,7 +94,6 @@ Template.registerHelper('tags', function () {
 
 // Googlemapsanezige sowie den Marker und die Kreise um den Marker
 Template.body.onCreated(function () {
-    // We can use the `ready` callback to interact with the map API once the map is ready.
     GoogleMaps.ready('map', function (map) {
         // Add a marker to the map once it's ready
         var marker = new google.maps.Marker({
@@ -155,7 +154,7 @@ Template.body.onCreated(function () {
                     mapMarkers[oldDocument._id]
                 );
 
-                // Remove the reference to this marker instance
+                // Entfernt den Marker
                 delete mapMarkers[oldDocument._id];
             }
         });
@@ -267,7 +266,7 @@ Template.navbar.events({
 });
 
 $(document).ready(function () {
-    // delegate calls to data-toggle="lightbox"
+    // Leitet die Aufrufe zu data-toggle="lightbox"
     $(document).delegate('*[data-toggle="lightbox"]', 'click', function (event) {
         event.preventDefault();
         return $(this).ekkoLightbox();

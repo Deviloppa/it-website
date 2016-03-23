@@ -1,0 +1,228 @@
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IT Website</title>
+</head>
+
+<body>
+<div class="container-fluid">
+    {{> navbar }}
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Tags
+                <small>Internet Technologien Website</small>
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Titel</th>
+                    <th>User</th>
+                    <th>Beschreibung</th>
+                    <th>Datum</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each tags}}
+                    <tr class="previewMap" data-id="{{_id}}">
+                        <!--  <td>{{_id}}</td> -->
+                        <td> {{titel}}</td>
+                        <td><strong>{{username}}</strong></td>
+                        <td> {{formatDesc description}} </td>
+                        <td>{{formatDate createdAt}}</td>
+                        <td>
+                            {{#if isOwner}}
+                                <span class="glyphicon glyphicon-trash delete"></span>
+                            {{/if}}
+                        </td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h3>Detail Vorschau</h3>
+            <div class="row">
+                {{#with Session 'currentTag'}}
+                    <div class="col-md-5">
+                        <dl>
+                            <dt>Author</dt>
+                            <dd>{{username}}</dd>
+                            <dt>Datum</dt>
+                            <dd>{{formatDate createdAt}}</dd>
+                            <dt>GPS Daten</dt>
+                            <dd>{{formatGpsPreview latLng.coordinates}}</dd>
+                            <dt>Beschreibung</dt>
+                            <dd>{{description}}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-7">
+                        {{#with Image image}}
+                            <a href="{{this.url uploading='/images/uploading.gif' storing='/images/storing.gif'}}"
+                               data-toggle="lightbox" data-type="image">
+                                <img src="{{this.url store='thumbs' uploading='/images/uploading.gif' storing='/images/storing.gif'}}"
+                                     alt="alt-text" class="img-responsive thumbnail"/>
+                            </a>
+                        {{/with}}
+                    </div>
+                {{/with}}
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {{> map}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{> addTag_Modal}}
+{{> login_Modal}}
+{{> register_Modal}}
+{{> lostPW_Modal}}
+<footer class="footer">
+    <div class="container-fluid">
+        <p class="text-muted pull-right">Copyright &copy; IT16, 2016.</p>
+    </div>
+</footer>
+</body>
+
+<template name="map">
+    <div class="map-container">
+        {{> googleMap name="map" options=geoLocationMapOptions}}
+    </div>
+</template>
+
+<template name="tag">
+
+</template>
+
+<template name="navbar">
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Home</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                {{#if currentUser}}
+                    <button type="button" class="btn btn-primary navbar-btn navbar-left" data-toggle="modal"
+                            data-target="#addTag_Modal">
+                        Tag eintragen
+                    </button>
+                    <form class="navbar-form navbar-left" role="search" onsubmit="return false;">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                            <input type="text" class="form-control" name="inputSearch" value="{{searchQuery}}"
+                                   placeholder="Suchen">
+                        </div>
+                    </form>
+                    <ul class="nav navbar-nav navbar-right">
+                        <button id="logout" type="button" class="btn btn-danger navbar-btn">Abmelden
+                        </button>
+                        <p class="navbar-text">Eingeloggt als {{currentUser.username}}</p>
+                    </ul>
+                {{else}}
+                    <ul class="navbar-nav nav navbar-right">
+                        <button type="button" class="btn btn-primary navbar-btn " data-toggle="modal"
+                                data-target="#login_Modal">Anmelden
+                        </button>
+                    </ul>
+                    <ul class="navbar-nav nav navbar-right">
+                        <p class="navbar-text"></p>
+                    </ul>
+                {{/if}}
+                <ul class="navbar-nav nav navbar-right">
+                    <form class="form-inline">
+                        <form class="form-group">
+                            <p class="navbar-text">Radius</p>
+                            <select class="form-control navbar-btn" id="radius">
+                                <option value="50,17">50 m</option>
+                                <option value="100,16">100 m</option>
+                                <option value="300,15">300 m</option>
+                                <option value="500,14">500 m</option>
+                                <option value="1000,14">1000 m</option>
+                                <option value="2000,13">2000 m</option>
+                                <option value="5000,11">5000 m</option>
+                            </select>
+                        </form>
+                    </form>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+</template>
+
+<template name="addTag_Modal">
+    <form id="addTag_Modal_Form">
+        <div class="modal fade" id="addTag_Modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">Tag hinzufügen</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Author: {{currentUser.username}}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Datum: {{formatDate datum}}</label>
+                        </div>
+                        <div class="form-group">
+                            <label>GPS Daten: {{formatGpsAddTag gpsCords}}</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="addTag_titel">Debug: Koordinaten</label>
+                            <input type="text" class="form-control" id="addTag_koordinaten" name="koordinaten"
+                                   placeholder="Koordinaten">
+                        </div>
+                        <div class="form-group">
+                            <label for="addTag_titel">Titel</label>
+                            <input type="text" class="form-control" id="addTag_titel" name="titel" placeholder="Titel"
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addTag_description">Beschreibung</label>
+                            <textarea maxlength="200" type="text" class="form-control" id="addTag_description"
+                                      name="description"
+                                      placeholder="Beschreibung" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <input id="input-1" type="file" class="file" name="file">
+
+                        </div>
+                        <div class="form-group">
+                           <span> oder </span>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-default" id="takePhoto">
+                                <span class="glyphicon glyphicon glyphicon-camera"></span> Foto machen
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary pull-right">Hinzufügen</button>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</template>
