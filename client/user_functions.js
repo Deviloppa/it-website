@@ -1,6 +1,3 @@
-/**
- * Created by Daniel on 11.03.2016.
- */
 Template.login_Modal.events({
     "submit #login_Modal_form": function(event) {
         event.preventDefault();

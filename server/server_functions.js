@@ -5,9 +5,9 @@ Meteor.startup(function () {
     Tags._ensureIndex({latLng: "2dsphere"});
 });
 
+//Direkte Zugriff erlauben von der Clientseite aus für die Bilder
 Images.allow({
     'insert': function() {
-        //TODO: Check if authenticated
         return true;
     },
     'update': function() {
@@ -19,6 +19,10 @@ Images.allow({
     }
 });
 
+/*
+Liefert die entsprechenden Tags mit dem passenden Suchtext und / oder dem ausgewählten Radius zurück
+Überpüft auch alle Variablen welchen vom Client an den Sevrer gesendet werden
+*/
 Meteor.publish('tags', function(_regex, _lng, _lat, _radius) {
 
     var query = {};
@@ -68,6 +72,11 @@ Meteor.publish('tags', function(_regex, _lng, _lat, _radius) {
     ];
 });
 
+/*
+ Liefert die Bilder zurück
+ Überpüft auch alle Variablen welchen vom Client an den Sevrer gesendet werden
+ */
+
 Meteor.publish('photo', function(photoId) {
     if (photoId == null) return;
     if (_.isUndefined(photoId)) return;
@@ -79,20 +88,29 @@ Meteor.publish('photo', function(photoId) {
 
 Meteor.methods({
 
+    /*
+     Löschen eines Tags
+     Überpüft auch alle Variablen welchen vom Client an den Sevrer gesendet werden und überprüft auch ob
+     der Tag auch tatsächlich dem Benutzer gehört
+     */
     deleteTag: function (tagID) {
 
         check(tagID, String);
 
         var tag = Tags.findOne(tagID);
         if (tag.owner !== Meteor.userId()) {
-            // If the task is private, make sure only the owner can delete it
             throw new Meteor.Error("not-authorized");
         }
 
         Tags.remove(tagID); //TODO: Check owner
     },
 
-
+    /*
+     Eintragen eines neuen Tags
+     Überpüft auch alle Variablen welchen vom Client an den Sevrer gesendet werden
+     Sollte der Benutzer ein Bild und ein Foto gleichzeitig versuchen hochzuladen wird jedoch nur das
+     Bild hochgeladen das es eine Reihenfolge beim Upload gibt
+     */
     addTag: function (_titel, _des, _latLng, _image, _coords) {
 
         check(_titel, String);
@@ -178,7 +196,6 @@ Meteor.methods({
                 future.return();
             }
         });
-
         return future.wait();
     }
 });

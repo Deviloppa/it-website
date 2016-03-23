@@ -18,10 +18,11 @@ Template.registerHelper('Image', function (id) {
     return Images.findOne(id);
 });
 
+//Kürzt die Beschreibung in der Tabelle auf 40 Zeichen
 Template.registerHelper('formatDesc', function (description) {
     var n = 40;
     var isTooLong = description.length > n;
-    var s_ = isTooLong ? description.substr(0, n - 1) : description;                   //trinitätsoperator
+    var s_ = isTooLong ? description.substr(0, n - 1) : description;    //Trinitätsoperator
     s_ = (isTooLong) ? s_.substr(0, s_.lastIndexOf(' ')) : s_;
     return isTooLong ? s_ + '...' : s_;
 });
@@ -78,6 +79,7 @@ Tracker.autorun(function() {
         Session.get('mapRadius')
     );
 });
+
 Tracker.autorun(function() {
     var tag = Session.get('currentTag')
     if (!_.isUndefined(tag) && !_.isNull(tag)) {
@@ -90,7 +92,7 @@ Template.registerHelper('tags', function () {
     return Tags.find({});
 });
 
-
+// Googlemapsanezige sowie den Marker und die Kreise um den Marker
 Template.body.onCreated(function () {
     // We can use the `ready` callback to interact with the map API once the map is ready.
     GoogleMaps.ready('map', function (map) {
@@ -119,6 +121,7 @@ Template.body.onCreated(function () {
             map.instance.setCenter(map.options.center);
         });
 
+        //Überwacht die Tags ob sich etwas geändert hat und setzt / enfernt dann die Marker auf der Map
         Tags.find({}).observe({
             added: function (document) {
                 mapMarkers[document._id] = null;
@@ -162,15 +165,15 @@ Template.body.onCreated(function () {
 
 
 Template.body.events({
+    //Ermöglicht es die Tags in der Googlemapskarte anzuklicken
     "click .previewMap": function (event) {
-        // Prevent default browser form submit
         event.preventDefault();
         var tag_id = $(event.currentTarget).data('id');
         var tag = Tags.findOne(tag_id);
 
         Session.set('currentTag', tag);
     },
-
+    //Löschen eines Tags
     "click .delete": function () {
         Meteor.call("deleteTag", this._id, function(error, result) {
             if (error) {
@@ -180,11 +183,11 @@ Template.body.events({
     }
 });
 
-
+// Tag eintragen ( Überprüft ob eine Datei oder ein Foto angeben wurde und ruft dann den entsprechenden Call auf
 Template.addTag_Modal.events({
     "submit #addTag_Modal_Form": function (event) {
         event.preventDefault();
-        // console.log("add tag submit event");
+
         var titel = event.target.titel.value;
         var desc = event.target.description.value;
         var _latLng = Geolocation.latLng();
@@ -198,7 +201,6 @@ Template.addTag_Modal.events({
                 Images.insert(fsFile, function(err, fileObj) {
                     if (err) {
                         console.log(err);
-                        // TODO: Show error to user
                     }
                     Meteor.call("addTag", titel, desc, _latLng, fileObj, coords);
                 });
@@ -212,7 +214,7 @@ Template.addTag_Modal.events({
             }
         }
 
-        // Clear form
+        //Form wieder leeren
         event.target.titel.value = "";
         event.target.description.value = "";
         event.target.koordinaten.value = "";
@@ -221,14 +223,13 @@ Template.addTag_Modal.events({
 
         $('#addTag_Modal').modal('hide');
     },
-     "click #takePhoto": function() {
 
+     "click #takePhoto": function() {
          MeteorCamera.getPicture({width: 1280, height: 1024, quality: 49}, function(error, data){
             if(error){
                 alert(error);
             }
             Session.set('photo', data);
-             //console.log(data);
          });
      }
 });
@@ -243,6 +244,7 @@ Template.addTag_Modal.helpers({
 });
 
 Template.navbar.events({
+    //Logout
     "click #logout": function (event) {
         event.preventDefault();
         Meteor.logout();
