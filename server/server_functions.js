@@ -146,12 +146,12 @@ Meteor.methods({
         Future = Npm.require('fibers/future');
         var future = new Future();
 
-        // Insert a task into the collection
+        // Einen Tag in die Collection schreiben
         Tags.insert({
             titel: _titel,
-            createdAt: new Date(),            // current time
-            owner: Meteor.userId(),           // _id of logged in user
-            username: Meteor.user().username,  // username of logged in user
+            createdAt: new Date(),            // Datum
+            owner: Meteor.userId(),           // _id des momentanen Benutzers
+            username: Meteor.user().username,  // Benutzername des Benutzers
             description: _des,
             latLng: latLng
         }, function(err, tag_id) {

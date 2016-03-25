@@ -1,3 +1,6 @@
+/*
+Loggt den Benutzer auf der Seite ein, falls es keinen Fehler beim Login gab
+ */
 Template.login_Modal.events({
     "submit #login_Modal_form": function(event) {
         event.preventDefault();
@@ -21,6 +24,9 @@ Template.login_Modal.events({
     }
 });
 
+/*
+ Setzt Fehler sodass der Benutzer sehen was schief gelaufen ist
+ */
 Template.login_Modal.helpers({
     "wrongPwd": function() {
         return (_.has(this, 'reason') && this.reason == "Incorrect password");
@@ -30,7 +36,10 @@ Template.login_Modal.helpers({
     }
 });
 
-
+/*
+Überprüft beim Login ob beide Kennwröter übereinstimmen und wenn ja wird der Benutzer registriert
+Ansonsten gibt es eine Fehlermeldung für den Benutzer
+ */
 Template.register_Modal.events({
     "submit #register_Modal_form": function(event) {
         event.preventDefault();
